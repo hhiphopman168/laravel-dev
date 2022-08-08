@@ -18,6 +18,7 @@ class DbCacheCommand extends Command
     public function handle(): void
     {
         TableHelper::ReCache();
+        $this->line('db cached...');
     }
 
 }

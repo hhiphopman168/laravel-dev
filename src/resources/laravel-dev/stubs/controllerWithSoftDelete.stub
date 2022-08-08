@@ -7,7 +7,7 @@ namespace App\Modules\{{ModuleName}};
 use App\Http\Controllers\Controller;
 use App\Models\{{ModelName}};
 use Illuminate\Http\Request;
-use Hhiphopman168\LaravelDev\Exception\Err;
+use App\Exceptions\Err;
 
 /**
  * @intro {{TableComment}}
@@ -25,10 +25,11 @@ class {{ModelName}}Controller extends Controller
     public function list(Request $request): mixed
     {
         $params = $request->validate([
-            'name' => 'nullable|string', // 模糊搜索：名称
+            'name' => 'nullable|string', # 模糊搜索：名称
         ]);
         return {{ModelName}}::ifWhereLike($params,'name')
             ->order()
+            ->withTrashed()
             ->paginate($this->perPage());
     }
 
@@ -55,7 +56,7 @@ class {{ModelName}}Controller extends Controller
     public function update(Request $request): array
     {
         $params = $request->validate([
-            'id' => 'required|integer', // id
+            'id' => 'required|integer', # id
 {{InsertString}}
         ]);
         {{ModelName}}::unique($params, ['name'], '名称');
@@ -64,16 +65,44 @@ class {{ModelName}}Controller extends Controller
     }
 
     /**
-     * @intro 删除
+     * @intro 软删除
+     * @param Request $request
+     * @return array
+     */
+    public function softDelete(Request $request): array
+    {
+        $params = $request->validate([
+            'id' => 'required|integer', # id
+        ]);
+        {{ModelName}}::idp($params)->delete();
+        return [];
+    }
+
+    /**
+     * @intro 恢复软删除
+     * @param Request $request
+     * @return array
+     */
+    public function restore(Request $request): array
+    {
+        $params = $request->validate([
+            'id' => 'required|integer', # id
+        ]);
+        {{ModelName}}::withTrashed()->idp($params)->restore();
+        return [];
+    }
+
+    /**
+     * @intro 强制删除
      * @param Request $request
      * @return array
      */
     public function delete(Request $request): array
     {
         $params = $request->validate([
-            'id' => 'required|integer', // id
+            'id' => 'required|integer', # id
         ]);
-        {{ModelName}}::idp($params)->delete();
+        {{ModelName}}::withTrashed()->idp($params)->forceDelete();
         return [];
     }
 }

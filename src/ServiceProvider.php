@@ -27,6 +27,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . '/resources/laravel-dev/dist' => public_path('docs'),
+        ]);
+
         $this->loadRoutesFrom(__DIR__ . '/routes/api.php');
     }
 }
