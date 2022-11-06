@@ -63,7 +63,7 @@ class GenFilesCommand extends BaseCommand
             return Str::of($item)->studly();
         }, $prefix);
 
-        $tableName = (string)Str::of($table)->snake()->plural();
+        $tableName = (string)Str::of($table)->snake();
         $modelName = (string)Str::of($tableName)->studly();
 
         $table = TableHelper::GetTable($tableName);
